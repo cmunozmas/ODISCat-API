@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Tests</title>
+
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <style>
+			.highcharts-figure, .highcharts-data-table table {
+			  min-width: 320px;
+			  max-width: 800px;
+			  margin: 1em auto;
+			}
+
+			.highcharts-data-table table {
+				font-family: Verdana, sans-serif;
+				border-collapse: collapse;
+				border: 1px solid #EBEBEB;
+				margin: 10px auto;
+				text-align: center;
+				width: 100%;
+				max-width: 500px;
+			}
+			.highcharts-data-table caption {
+			  padding: 1em 0;
+			  font-size: 1.2em;
+			  color: #555;
+			}
+			.highcharts-data-table th {
+				font-weight: 600;
+			  padding: 0.5em;
+			}
+			.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+			  padding: 0.5em;
+			}
+			.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+			  background: #f8f8f8;
+			}
+			.highcharts-data-table tr:hover {
+			  background: #f1f7ff;
+			}
+		</style>
+  </head>
+  <body>
+
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+  <p class="highcharts-description">
+    This force directed graph shows an example of a network graph, where
+    the data fows from ODISCat resources at a first level to the central OBIS Node. The second level does not contain only sources that contribute to OBIS data!!
+  </p>
+</figure>
+
+
+<script>
+// Add the nodes option through an event call. We want to start with the parent
+// item and apply separate colors to each child element, then the same color to
+// grandchildren.
+Highcharts.addEvent(
+  Highcharts.Series,
+  'afterSetOptions',
+  function (e) {
+    var colors = Highcharts.getOptions().colors,
+      i = 0,
+      nodes = {};
+
+    if (
+      this instanceof Highcharts.seriesTypes.networkgraph &&
+      e.options.id === 'lang-tree'
+    ) {
+      e.options.data.forEach(function (link) {
+
+        if (link[0] === 'OBIS') {
+          nodes['OBIS'] = {
+            id: 'OBIS',
+            marker: {
+              radius: 20
+            }
+          };
+          nodes[link[1]] = {
+            id: link[1],
+            marker: {
+              radius: 10
+            },
+            color: colors[i++]
+          };
+        } else if (nodes[link[0]] && nodes[link[0]].color) {
+          nodes[link[1]] = {
+            id: link[1],
+            color: nodes[link[0]].color
+          };
+        }
+      });
+
+      e.options.nodes = Object.keys(nodes).map(function (id) {
+        return nodes[id];
+      });
+    }
+  }
+);
+
+Highcharts.chart('container', {
+  chart: {
+    type: 'networkgraph',
+    height: '100%'
+  },
+  title: {
+    text: 'Dataflow towards OBIS using ODISCat contents'
+  },
+  subtitle: {
+    text: 'A Force-Directed Network Graph in Highcharts'
+  },
+  plotOptions: {
+    networkgraph: {
+      keys: ['to','from'],
+      layoutAlgorithm: {
+        enableSimulation: true,
+        friction: -0.9
+      }
+    }
+  },
+  series: [{
+    dataLabels: {
+      enabled: true,
+      linkFormat: ''
+    },
+    id: 'lang-tree',
+    data: [
+
+
+['Locations of seals in Patagonian Large Marine Ecosystem (OBIS South America, AR-OBIS, Sub-node)','OBIS'],['Italy NODC biodiversity GBIF IPT','OBIS'],['Australian Ocean Data Network','OBIS'],['Australian Antarctic Data Centre','OBIS'],['An Atlas of Southern Ocean Planctonic Ostracods','OBIS'],['The European Ocean Biogeographic Information System','OBIS'],['Locations of seals in Patagonian Large Marine Ecosystem (OBIS South America, AR-OBIS, Sub-node)','OBIS'],['Centro Nacional Patagonico Ichthyological Collection','OBIS'],['Cetacean distribution in the South Atlantic and South Pacific Ocean (AR-OBIS)','OBIS'],['Demersal and pelagic species from the Patagonian shelf','OBIS'],['Distribution ashore and breeding places of southern elephant seals','OBIS'],['FPN-EH-AVES - Breeding Distribution of seabirds in Patagonia Argentina coast','OBIS'],['New Zealand Ocean Data Network','OBIS'],['NIWA Coastal and Marine Data Portal','OBIS'],['Southwest Pacific Regional OBIS Node','OBIS'],['OBIS Australia IPT','OBIS'],['OBIS Australia web site','OBIS'],['CSIRO MarLIN metadata catalogue','OBIS'],['OBIS-USA Integrated Publishing Toolkit','OBIS'],['SeaDataNet Common Data Index','OBIS'],['Scientific Collections - Marine Biodiversity of Yucatán','OBIS'],['PANGAEA','OBIS'],['The algae Situation','OBIS'],['UkrSCES Integrated Publishing Toolkit','OBIS'],['Conservation of Arctic Flora and Fauna IPT','OBIS'],['Eastern South Pacific - Ocean Biodiversity Information System','OBIS'],['Wildlife on Voyage application','OBIS'],['The Archive for Marine Species and Habitats Data','OBIS'],['Oceans Past Initiative','OBIS'],['Caribbean Regional OBIS Node','OBIS'],['Biological Information System for Marine Life','OBIS'],['Harmful Algal Event Data Base','OBIS'],['IOC-UNESCO Taxonomic Reference List of Harmful Micro Algae','OBIS'],['OBIS mapper','OBIS'],['OBIS data portal','OBIS'],['GEOINFORMATION PORTAL 2020 - NATIONAL BIODIVERSITY INFORMATION SYSTEM (SNIB)','OBIS'],['Swedish Ocean Archive','OBIS'],['Ocean Tracking Network - Data Portal','OBIS'],['ERDDAP Server - Ocean Tracking Network','OBIS'],['Ocean Tracking Network - GeoServer','OBIS'],['Ocean Tracking Network - GBIF IPT records','OBIS'],['Ocean Tracking Network - OBIS node Information','OBIS'],['All Public Data - Ocean Tracking Network','OBIS'],['Antarctic Biodiversity Information Facility','OBIS'],['Marine Informatics Unit - Institute of Marine Sciences and Limnology','OBIS'],['Ichthyological Collection - Institute of Marine Sciences and Limnology','OBIS'],['National Biodiversity Information System of Mexico','OBIS'],['EncicloVida - CONABIO','OBIS'],['Reef Life Survey Data Portal','OBIS'],['Data Portal - Institute for Marine and Antarctic Studies','OBIS'],['NOAA Deep Sea Coral Data Portal DSCRTP','OBIS'],['SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management','OBIS'],['SeaDataNet Parameter Thesaurus','OBIS'],['Cefas Data Hub','OBIS'],['Marine Biodiversity Data','OBIS'],['OBIS','Locations of seals in Patagonian Large Marine Ecosystem (OBIS South America, AR-OBIS, Sub-node)'],['Integrated Marine Observing System (IMOS)','Australian Ocean Data Network'],['WoRMS','The European Ocean Biogeographic Information System'],['ArOBIS Centro Nacional Patagónico','Locations of seals in Patagonian Large Marine Ecosystem (OBIS South America, AR-OBIS, Sub-node)'],['ArOBIS Centro Nacional PatagÃ³nico','Centro Nacional Patagonico Ichthyological Collection'],['ArOBIS Centro Nacional PatagÃ³nico','Cetacean distribution in the South Atlantic and South Pacific Ocean (AR-OBIS)'],['ArOBIS Centro Nacional Patagónico','Demersal and pelagic species from the Patagonian shelf'],['ArOBIS Centro Nacional Patagónico','Distribution ashore and breeding places of southern elephant seals'],['ArOBIS Centro Nacional Patagónico','FPN-EH-AVES - Breeding Distribution of seabirds in Patagonia Argentina coast'],['National monitoring','New Zealand Ocean Data Network'],['Integrated Marine Observing System (IMOS)','OBIS Australia web site'],['CSIRO Oceans and Atmosphere Information and Data Centre','OBIS Australia web site'],['Online Zoological Collections of Australian Museums (OZCAM)','OBIS Australia web site'],['Australian Institute of Marine Sciences (AIMS)','OBIS Australia web site'],['Australasian Seabird Group, BirdLife Australia','OBIS Australia web site'],['NESP Marine Biodiversity Hub','OBIS Australia web site'],['Australian Coastal Ecosystems Facility (ACEF) ','OBIS Australia web site'],['Institute for Marine and Antarctic Studies, University of Tasmania (IMAS)','OBIS Australia web site'],['NSW Fisheries','OBIS Australia web site'],['Bureau of Agricultural and Resource Economics and Sciences (ABARES)','OBIS Australia web site'],['National monitoring','CSIRO MarLIN metadata catalogue'],['National monitoring','OBIS-USA Integrated Publishing Toolkit'],['Bureau of Ocean Energy Management (BOEM)','OBIS-USA Integrated Publishing Toolkit'],['Integrated Ocean Observing System (IOOS)','OBIS-USA Integrated Publishing Toolkit'],['National Centers for Environmental Information (NOAA)','OBIS-USA Integrated Publishing Toolkit'],['National Oceanic and Atmospheric Administration (NOAA)','OBIS-USA Integrated Publishing Toolkit'],['U.S. Department of the Interior, Ocean, Great Lakes and Coastal Programme','OBIS-USA Integrated Publishing Toolkit'],['U.S. National Science Foundation, Ocean Sciences (NSF-OCE)','OBIS-USA Integrated Publishing Toolkit'],['GOSUD','SeaDataNet Common Data Index'],['Argo','SeaDataNet Common Data Index'],['EMODnet','SeaDataNet Common Data Index'],['National monitoring','The algae Situation'],['Conservation of Arctic Flora and Fauna (CAFF)','Conservation of Arctic Flora and Fauna IPT'],['Instituto Milenio de Oceanografía (IMO)','Eastern South Pacific - Ocean Biodiversity Information System'],['Universidad de Concepción','Eastern South Pacific - Ocean Biodiversity Information System'],['Universidad de Antofagasta','Eastern South Pacific - Ocean Biodiversity Information System'],['National monitoring','Harmful Algal Event Data Base'],['OBIS','IOC-UNESCO Taxonomic Reference List of Harmful Micro Algae'],['Literature','IOC-UNESCO Taxonomic Reference List of Harmful Micro Algae'],['WOD','OBIS mapper'],['SeaDataNet/SeaDataCloud','OBIS mapper'],['EMODnet','OBIS mapper'],['GOOS','OBIS mapper'],['PANGAEA','OBIS mapper'],['National monitoring','OBIS mapper'],['WOD','OBIS data portal'],['SeaDataNet/SeaDataCloud','OBIS data portal'],['EMODnet','OBIS data portal'],['GOOS','OBIS data portal'],['PANGAEA','OBIS data portal'],['National monitoring','OBIS data portal'],['PANGAEA','Antarctic Biodiversity Information Facility'],['Australian Antarctic Data Centre (AADC)','Antarctic Biodiversity Information Facility'],['Royal Belgian Institute of Natural Science (RBINS)','Antarctic Biodiversity Information Facility'],['Census of Marine Life (CoML)','Antarctic Biodiversity Information Facility'],['Scientific Committee on Antarctic Research (SCAR)','Antarctic Biodiversity Information Facility'],['Belgian Biodiversity Platform (BBPF)','Antarctic Biodiversity Information Facility'],['Sampling','Marine Informatics Unit - Institute of Marine Sciences and Limnology'],['OBIS','Ichthyological Collection - Institute of Marine Sciences and Limnology'],['Sampling','National Biodiversity Information System of Mexico'],['OBIS','EncicloVida - CONABIO'],['NOAA Deep Sea Coral Research and Technology Program (DSCRTP)','NOAA Deep Sea Coral Data Portal DSCRTP'],['GOSUD','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],['Argo','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],['WOD','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],['EMODnet','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],['National monitoring','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],[' Coriolis Ocean database for ReAnalysis (CORA)','SeaDataNet Pan-European Infrastructure for Ocean & Marine Data Management'],['OBIS','Cefas Data Hub'],['SeaDataNet/SeaDataCloud','Cefas Data Hub'],['EMODnet','Cefas Data Hub'],['GEBCO','Cefas Data Hub'],['ICES','Cefas Data Hub'],['HELCOM','Cefas Data Hub'],['WoRMS','Cefas Data Hub'],['EurOBIS','Cefas Data Hub'],['British Oceanographic Data Centre (BODC)','Cefas Data Hub'],['International Commission for the Conservation of Atlantic Tunas (ICCAT)','Cefas Data Hub'],['Food and Agriculture Organization of the United Nations (FAO)','Cefas Data Hub'],['Global Biodiversity Information Facility (GBIF)','Cefas Data Hub'],['Global Earth Observations System of Systems (GEOSS)','Cefas Data Hub'],['National Oceanic and Atmospheric Administration (NOAA)','Cefas Data Hub'],['ICES Network','Cefas Data Hub'],['EuroGOOS','Cefas Data Hub'],['DataCite','Cefas Data Hub'],['All available sources including those listed, but not limited to','Cefas Data Hub']
+
+
+    ]
+  }]
+});
+</script>
+
+
+  </body>
+</html>

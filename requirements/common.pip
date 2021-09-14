@@ -1,0 +1,11 @@
+# This file collects all required third-party applications that are needed
+# to run this project. Later you can install all these apps in a row
+# using pip. Example::
+#
+#     pip install -r requirements/common.pip
+
+Django==1.11
+psycopg2==2.8.4
+Pillow==6.2.2
+pandas==0.24.2
+requests

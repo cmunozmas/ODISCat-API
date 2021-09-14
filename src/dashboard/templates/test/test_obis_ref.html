@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Tests</title>
+
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <style>
+			.highcharts-figure, .highcharts-data-table table {
+			  min-width: 320px;
+			  max-width: 800px;
+			  margin: 1em auto;
+			}
+
+			.highcharts-data-table table {
+				font-family: Verdana, sans-serif;
+				border-collapse: collapse;
+				border: 1px solid #EBEBEB;
+				margin: 10px auto;
+				text-align: center;
+				width: 100%;
+				max-width: 500px;
+			}
+			.highcharts-data-table caption {
+			  padding: 1em 0;
+			  font-size: 1.2em;
+			  color: #555;
+			}
+			.highcharts-data-table th {
+				font-weight: 600;
+			  padding: 0.5em;
+			}
+			.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+			  padding: 0.5em;
+			}
+			.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+			  background: #f8f8f8;
+			}
+			.highcharts-data-table tr:hover {
+			  background: #f1f7ff;
+			}
+		</style>
+  </head>
+  <body>
+
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+  <p class="highcharts-description">
+    This force directed graph shows an example of a network graph, where
+    the data fows from institutions through the different OBIS Nodes and IPTs to the OBIS central node
+    The nodes can be dragged around and will be repositioned dynamically.
+    Network graphs are typically used to show relations in data. In this
+    case, we are showing a hierarchical structure.
+  </p>
+</figure>
+
+
+<script>
+// Add the nodes option through an event call. We want to start with the parent
+// item and apply separate colors to each child element, then the same color to
+// grandchildren.
+Highcharts.addEvent(
+  Highcharts.Series,
+  'afterSetOptions',
+  function (e) {
+    var colors = Highcharts.getOptions().colors,
+      i = 0,
+      nodes = {};
+
+    if (
+      this instanceof Highcharts.seriesTypes.networkgraph &&
+      e.options.id === 'lang-tree'
+    ) {
+      e.options.data.forEach(function (link) {
+
+        if (link[0] === 'OBIS') {
+          nodes['OBIS'] = {
+            id: 'OBIS',
+            marker: {
+              radius: 20
+            }
+          };
+          nodes[link[1]] = {
+            id: link[1],
+            marker: {
+              radius: 10
+            },
+            color: colors[i++]
+          };
+        } else if (nodes[link[0]] && nodes[link[0]].color) {
+          nodes[link[1]] = {
+            id: link[1],
+            color: nodes[link[0]].color
+          };
+        }
+      });
+
+      e.options.nodes = Object.keys(nodes).map(function (id) {
+        return nodes[id];
+      });
+    }
+  }
+);
+
+Highcharts.chart('container', {
+  chart: {
+    type: 'networkgraph',
+    height: '100%'
+  },
+  title: {
+    text: 'Dataflow towards OBIS using ODISCat contents'
+  },
+  subtitle: {
+    text: 'A Force-Directed Network Graph in Highcharts'
+  },
+  plotOptions: {
+    networkgraph: {
+      keys: ['to','from'],
+      layoutAlgorithm: {
+        enableSimulation: true,
+        friction: -0.9
+      }
+    }
+  },
+  series: [{
+    dataLabels: {
+      enabled: true,
+      linkFormat: ''
+    },
+    id: 'lang-tree',
+    data: [
+
+['OBIS API','OBIS'], ['OBIS Mapper','OBIS API'], ['OBIS R Package','OBIS API'],
+
+['OBIS Japan IPT','OBIS Japan'], ['OBIS','OBIS Japan IPT'], ['OBIS Japan','BISMAL'], ['OBIS Japan','Japan Oceanographic Data Center'], ['OBIS Japan','National Research Institute of Fisheries Science, Japan Fisheries Research and Education Agency'], ['OBIS Japan','Japan Agency for Marine-Earth Science and Technology, Yokosuka'],   ['OBIS Japan','Ministry of the Environment'],   ['OBIS Japan','National Museum of Nature and Science, Department of Zoology, Tsukuba'],   ['OBIS Japan','University of Tokyo – Atmosphere and Ocean Research Institute'],   ['OBIS Japan','National Institute of Polar Research'],   ['OBIS Japan','The University of Tokyo, Atmosphere and Ocean Research Institute'],   ['OBIS Japan','Okinawa Institute of Science and Technology Graduate University'],   ['OBIS Japan','Plankton Society of Japan'],   ['OBIS Japan','Discover Blue'],   ['OBIS Japan','Coastal Branch of Natural History Museum and Institute, Chiba'],
+
+
+['EurOBIS IPT', 'EurOBIS'], ['OBIS','EurOBIS IPT'], ['EurOBIS','GBIF'], ['EurOBIS','EMODnet Biology'], ['EurOBIS','LifeWATCH'], ['EurOBIS','OBIS Black Sea'], ['EurOBIS','International Council for the Exploration of the Sea'], ['EurOBIS','OBIS Deep Sea'], ['EurOBIS','MedOBIS'], ['EurOBIS IPT','OBIS UK'], ['EurOBIS','OBIS OPI'], ['EurOBIS','HAB OBIS'], ['EurOBIS','OBIS-SEAMAP'], ['EurOBIS','Instituto Español de Oceanografía'], ['EurOBIS','Vlaams Instituut voor de Zee'], ['EurOBIS','Sveriges meteorologiska och hydrologiska institut'], ['EurOBIS','Havs- och Vattenmyndigheten'], ['EurOBIS','Institut français de recherche pour l\'exploitation de la mer, IFREMER, Issy les Moulineaux'], ['EurOBIS','Institut de Recherche pour le Developpement'], ['EurOBIS','Deltares'], ['EurOBIS','Koninklijk Nederlands Instituut voor Onderzoek der Zee'], ['EurOBIS','Norwegian Institute of Nature Research, NINA Tromsø'], ['EurOBIS','Finnish Environment Institute'], ['EurOBIS','Institute of Marine Research'], ['EurOBIS','Koninklijk Belgisch Instituut voor Natuurwetenschappen'], ['EurOBIS','Koninklijk Nederlands Instituut voor Onderzoek der Zee, Yerseke — Afdeling Monitor Taakgroep'], ['EurOBIS','Universiteit Gent, Marine Biology research group'], ['EurOBIS','Cellule De Suivi Du Littoral Normand'], ['EurOBIS','Istituto Nazionale di Oceanografia e di Geofisica Sperimentale, Trieste'], ['EurOBIS','Vlaamse overheid; Beleidsdomein Landbouw en Visserij; Instituut voor landbouw- , visserij en voedingsonderzoek; Kenniseenheid: Dier; Aquatisch Milieu en Kwaliteit'], ['EurOBIS','POD Federaal Wetenschapsbeleid'], ['EurOBIS','ARVAM Agence pour la Recherche et la Valorisation Marine'], ['EurOBIS','Alfred-Wegener-Institut (Helmholtz-Zentrum für Polar- und Meeresforschung)'], ['EurOBIS','CREOCEAN'], ['EurOBIS','Station Biologique de Roscoff'], ['EurOBIS','National Oceanographic and Atmospheric Administration, U. S. Department of Commerce Boulder Labs'], ['EurOBIS','Vlaamse Overheid - Instituut voor Natuur- en Bosonderzoek'], ['EurOBIS','Vlaamse overheid - Instituut voor Natuur- en Bosonderzoek - Afdeling Biodiversiteit en Natuurlijk Milieu - Onderzoeksgroep Ecosysteemdiversiteit'], ['EurOBIS','European Seabirds at Sea'], ['EurOBIS','Universitat de les Illes Balears'], ['EurOBIS','GEOMAR Helmholtz Centre for Ocean Research Kiel'], ['EurOBIS','Senckenberg Research Institute — German Centre for Marine Biodiversity Research'], ['EurOBIS','Christian-Albrechts Universität zu Kiel'], ['EurOBIS','Alfred-Wegener-Institut - Wattenmeerstation'], ['EurOBIS','Koninklijk Nederlands Instituut voor Onderzoek der Zee, Yerseke'], ['EurOBIS','Det Norske Veritas, Oslo'], ['EurOBIS','Norwegian Oil and Gas'], ['EurOBIS','World Whaling History'], ['EurOBIS','Odessa National I.I. Mechnikov University'], ['EurOBIS','Akvaplan-niva'], ['EurOBIS','University of Bergen – Department of Biological Sciences'], ['EurOBIS','Instituto Español de Oceanografía – Centro Oceanográfico de Baleares'], ['EurOBIS','Havenbedrijf Rotterdam N.V.'], ['EurOBIS','Katholieke Universiteit Leuven'], ['EurOBIS','Leibniz Institute for Baltic Sea Research, Warnemünde'],  ['EurOBIS','Główny Inspektorat Ochrony Środowiska (GIOŚ)'],  ['EurOBIS','Koninklijk Nederlands Instituut voor Onderzoek der Zee, Yerseke — Afdeling Ecosysteem Studies'],  ['EurOBIS','Fundación Charles Darwin'],  ['EurOBIS','National Institute for Marine Research and Development “Grigore Antipa”'],  ['EurOBIS','Naturhistoriska riksmuseet'],  ['EurOBIS','Université Libre de Bruxelles'],  ['EurOBIS','WoRMS Steering Committee'],  ['EurOBIS','Instituut voor Landbouw, Visserij en voedingonderzoek'],  ['EurOBIS','Museum National d\'Histoire Naturelle / IRD'],  ['EurOBIS','P.P.Shirshov Institute of Oceanology of Russian Academy of Sciences'],  ['EurOBIS','Woods Hole Oceanographic Institution'],  ['EurOBIS','Bureau Waardenburg bv – Ecology & Landscape'],  ['EurOBIS','Hawaii Institute of Marine Biology, University of Hawaii'],  ['EurOBIS','Instituto del Mar del Perú'],  ['EurOBIS','Lomonosov Moscow State University,GSP'],  ['EurOBIS','University of Tasmania'],  ['EurOBIS','Australian Institute of Marine Science, Townsville'],  ['EurOBIS','National Institute for Water & Atmospheric Research'],  ['EurOBIS','Universidade Federal do Pará'],  ['EurOBIS','Univesity of Texas at San Antonio, College of Sciences'],  ['EurOBIS','University of Salzburg'],  ['EurOBIS','Universiteit Gent'],  ['EurOBIS','Columbia University, Lamont-Doherty Earth Observatory'],  ['EurOBIS','Porcupine Marine Natural History Society'],  ['EurOBIS','European University at Saint Petersburg'],  ['EurOBIS','Reptielen Amfibieën Vissen Onderzoek Nederland'],  ['EurOBIS','Brema Laboratory'],  ['EurOBIS','Koninklijke Nederlandse Academie van Wetenschappen'],  ['EurOBIS','Norwegian Institute for Water Research'],  ['EurOBIS','Centre de Documentació de Biodiversitat Vegetal'],  ['EurOBIS','Instituto de Investigaciones Marinas y Costeras José Benito Vives de Andreis'],  ['EurOBIS','Museum Amager'],  ['EurOBIS','Kenna Eco Diving'],  ['EurOBIS','Miljødirektoratet'],  ['EurOBIS','Instituto Español de Oceanografía – Centro Oceanográfico de Canarias'],  ['EurOBIS','Memorial University of Newfoundland'],  ['EurOBIS','Italian National Institute for Environmental Protection and research'],  ['EurOBIS','Marine Research Institute, Hafrannsóknastofnunin'],  ['EurOBIS','Carl von Ossietzky University of Oldenburg'],  ['EurOBIS','Biosphere Expeditions'], ['EurOBIS','UNESCO-IOC'], ['EurOBIS','KU Leuven - Laboratory of Biodiversity and Evolutionary Genomics'], ['EurOBIS','Royal Netherlands Institute for Sea Research — Estuarine & Delta Systems'], ['EurOBIS','National Museum of Natural History, Smithsonian Institution'], ['EurOBIS','Democritus University of Thrace – Department of Primary Education'],['EurOBIS','Institut für Polarökologie der Christian-Albrechts-Universität'], ['EurOBIS','AZTI'], ['EurOBIS','Centro de Estudios y Experimentación de Obras Públicas'], ['EurOBIS','GEO-Tag der Natur'], ['EurOBIS','Democritus University of Thrace'], ['EurOBIS','Instituto Español de Oceanografía – Centro Oceanográfico de Málaga'], ['EurOBIS','Centre National de la Recherche Scientifique'], ['EurOBIS','Stazione Zoologica Anton Dohrn di Napoli – Benthos Biology and Ecology Laboratory'], ['EurOBIS','Instituto Español de Oceanografía – Centro Oceanográfico de Cádiz'], ['EurOBIS','University of Montenegro-Institute of Marine Biology'], ['EurOBIS', 'University of Belgrade'], ['EurOBIS','Bundesanstalt für Gewässerkunde'], ['EurOBIS','SOCIB -Balearic Islands Observing and Forecasting System'], ['EurOBIS','Association Peau-Bleue'], ['EurOBIS','University of Gdansk'], ['EurOBIS','Seasearch'], ['EurOBIS','Dorset Environmental Record Centre'], 
+
+
+
+['OBIS UK','British Oceanographic Data Centre'], ['OBIS UK','The Marine Biological Association of the United Kingdom'], ['OBIS UK','Vlaams Instituut voor de Zee'], ['OBIS UK','Sir Alister Hardy Foundation for Ocean Science'], ['OBIS UK','Center for Environment, Fisheries and Aquaculture Science, Lowestoft Laboratory'], ['OBIS UK','National Biodiversity Network Trust'], ['OBIS UK','Natural Resources Wales'], ['OBIS UK','National Oceanographic and Atmospheric Administration, U. S. Department of Commerce Boulder Labs'], ['OBIS UK','Plymouth Marine Laboratory'], ['OBIS UK','Marine Ecological Solutions Ltd.'], ['OBIS UK','Agri-Food and Biosciences Institute'], ['OBIS UK','University of Bangor, The College of Ocean Sciences'], ['OBIS UK','Department for Environment, Food and Rural Affairs'], ['OBIS UK','National Oceanography Centre, Southampton'], ['OBIS UK','Centre for Environement, Fisheries and Aquaculture Sciences, Burnham Laboratory'], ['OBIS UK','Marine Institute Headquarters, Galway'], ['OBIS UK','Porcupine Marine Natural History Society'], ['OBIS UK','The Marine Environment Monitoring and Assessment National database'], ['OBIS UK','Yorkshire Naturalists Union - Marine and Coastal Section'], ['OBIS UK','The Natural History Museum'], ['OBIS UK','Seasearch'], ['OBIS UK','Dorset Environmental Record Centre'], ['OBIS UK','MEDIN'], ['OBIS UK','The National Biodiversity Network'],
+
+
+['MedOBIS IPT','MedOBIS'], ['OBIS', 'MedOBIS IPT'], ['MedOBIS', 'Hellenic Centre for Marine Research - Institute of Marine Biology, Biotechnology and Aquaculture'], ['MedOBIS', 'Observatoire Océanologique de Villefranche'], ['MedOBIS', 'Sorbonne Université'], ['MedOBIS', 'Israel Oceanographic & Limnological Research'], ['MedOBIS', 'Tel Aviv University, Department of Zoology'], ['MedOBIS', 'University of Haifa, Leon Recanati Institute for Marine Studies'], ['MedOBIS', 'Aristotle University of Thessaloniki - Department of Biology - Laboratory of Zoology'], ['MedOBIS', 'Demokritos, Institute of Biosciences and Applications'], ['MedOBIS', 'Hellenic Centre for Marine Research - Institute of Oceanography'], ['MedOBIS', 'Vlaams Instituut voor de Zee'], ['MedOBIS', 'University of the Aegean, Lesvos'], ['MedOBIS', 'University of Plymouth'], ['MedOBIS', 'Technopole Brest Iroise'], ['MedOBIS', 'University of Florence – Department of Biology'], ['MedOBIS', 'Università di Cagliari – Facoltà di ingegneria e architettura'], ['MedOBIS', 'Hellenic Centre for Marine Research - Institute of Marine Biological Resources and Inland Waters'], ['MedOBIS', 'University of Crete'], ['MedOBIS', 'Foundation for Research and Technology - Hellas - Institute of Applied & Computational Mathematics'], ['MedOBIS', 'University of the Aegean'], ['MedOBIS', 'Aristotle University of Thessaloniki'], ['MedOBIS', 'Arta Fisheries Department'], ['MedOBIS', 'Preveza Fisheries Department'], ['MedOBIS', 'National Institute of Oceanography and Fisheries, Alexandria'], ['MedOBIS', 'Universität Wien'], 
+
+['OBIS','UkrSCES IPT'], ['UkrSCES IPT','OBIS Black Sea'], ['OBIS Black Sea','Bulgarian Academy of Sciences, Institute of Oceanology'], ['OBIS Black Sea','Ukrainian Scientific Centre of Ecology of the Sea'], ['OBIS Black Sea','National Academy of Sciences – I. I. Schmalhausen Institute of Zoology'], 
+
+['OBIS','OBIS Brazil IPT'], ['OBIS Brazil IPT','OBIS Brazil'], ['OBIS Brazil','UNESCO-IOC'], ['OBIS Brazil','Universidade Federal do Espírito Santo'], ['OBIS Brazil','Plymouth Marine Laboratory'], ['OBIS Brazil','Natural Environment Research Council'],
+
+
+['OBIS USA IPT','OBIS USA'], ['OBIS','OBIS USA IPT'], ['OBIS USA','U.S. Geological Survey – Everglades Research Offices'], ['OBIS USA','Burke Museum'], ['OBIS USA','Florida Museum of Natural History'], ['OBIS USA','Caribbean Coastal Ocean Observing System'], ['OBIS USA','Virginia Institute of Marine Sciences'], ['OBIS USA','Diversity of the Indo-Pacific Network'], ['OBIS USA','Texas A&M University, College Station – Department of Oceanography'], ['OBIS USA','Florida Fish and Wildlife Conservation Commission, Fish and Wildlife Research Institute'], ['OBIS USA','Axiom Data Science'], ['OBIS USA','Northeastern University, Marine Science Center'], ['OBIS USA','U.S. Geological Survey – Menlo Park Campus'], ['OBIS USA','U.S. Geological Survey – Wetland and Aquatic Research Center'], ['OBIS USA','Bureau of Ocean Energy Management of the US Department of the Interior'], ['OBIS USA','University of California, Santa Barbara'], ['OBIS USA','Marine Biodiversity Observation Network – Santa Barbara Channel'], ['OBIS USA','KU Leuven - Laboratory of Biodiversity and Evolutionary Genomics'], ['OBIS USA','National Oceanic and Atmospheric Administration, Silver Spring'], ['OBIS USA','Bigelow Laboratory for Ocean Sciences'], ['OBIS USA','University of South Florida, College of Marine Science'], ['OBIS USA','Tennenbaum Marine Observatories Network'], ['OBIS USA','Woods Hole Oceanographic Institution'], ['OBIS USA','Pennsylvania State University'], ['OBIS USA','U.S. Geological Survey – Alaska Science Center'], ['OBIS USA','Sea Education Association'], ['OBIS USA','U.S. Geological Survey HQ'], ['OBIS USA','National Oceanic and Atmospheric Administration, Washington'], ['OBIS USA','National Oceanic and Atmospheric Administration'], ['OBIS USA','NOAA, Southeast Fisheries Science Center, National Marine Fisheries Service Southeast Miami Laboratory'], ['OBIS USA','Rosenstiel School of Marine & Atmospheric Science, University of Miami'], ['OBIS USA','Gulf of Mexico Coastal Ocean Observing System'], ['OBIS USA','Houston Advanced Research Center'], ['OBIS USA','US National Oceanographic Data Center (NODC)'], ['OBIS USA','U.S. Geological Survey – Patuxent Wildlife Research Center'], ['OBIS USA','NOAA, Center for Sponsored Coastal Ocean Research, Silver Spring'], 
+
+['AfrOBIS IPT','AfrOBIS'], ['OBIS', 'AfrOBIS IPT'],['AfrOBIS','UNESCO-IOC'], ['AfrOBIS','Council for Scientific and Industrial Research, Stellenbosch'], ['AfrOBIS','Rhodes University'], ['AfrOBIS','De Beers Namibia Holdings'], ['AfrOBIS','Centre de Recherche Scientifique de Conakry Rogbanè'], ['AfrOBIS','Coastal Oceans Research and Development Indian Ocean'], ['AfrOBIS','De Beers Group'], ['AfrOBIS','Université de Lomé, Centre De Gestion Integrée du Littoral et de Environnement'], ['AfrOBIS','Nigerian Institute for Oceanography & Marine Research (NIOMR)'], ['AfrOBIS','Centre de Recherches Halieutiques et Océanologiques du Bénin'], 
+
+['OBIS OPI IPT','OBIS OPI'], ['OBIS','OBIS OPI IPT'],
+
+['OTN IPT','Ocean Tracking Network'], ['OBIS','OTN IPT'], ['Ocean Tracking Network','Kintama Research Services'], ['Ocean Tracking Network','University of British Columbia'], ['Ocean Tracking Network','NOAA National Marine Fisheries Service, Southwest Fisheries Science Center'], ['Ocean Tracking Network','Dalhousie University'], ['Ocean Tracking Network','University of Washington'], ['Ocean Tracking Network','Acadia University'], ['Ocean Tracking Network','Oregon State University'], ['Ocean Tracking Network','Cape Breton University'], ['Ocean Tracking Network','Shark Spotters'], ['Ocean Tracking Network','Rhodes University'], ['Ocean Tracking Network','South African Department of Agriculture, Forestry and Fisheries'], ['Ocean Tracking Network','Nova Scotia – Fisheries and Aquaculture'], ['Ocean Tracking Network','State of Maine — Department of Marine Resources — Bureau of Sea Run Fisheries and Habitat'], 
+
+['Canadian Museum of Nautre IPT','OBIS-Canada'], ['OBIS-Canada IPT','OBIS-Canada'], ['OBIS','OBIS-Canada IPT'],['OBIS','Canadian Museum of Nautre IPT'], ['OBIS-Canada','Fisheries and Oceans Canada – Bedford Institute of Oceanography'], ['OBIS-Canada','Pacific Biological Station (DFO – PBS), Fisheries and Oceans Canada'], ['OBIS-Canada','Northwest Atlantic Fisheries Centre (DFO – NWAFC), Fisheries and Oceans Canada'], ['OBIS-Canada','Fishermen and Scientists Research Society'], ['OBIS-Canada','Fisheries and Oceans Canada'], ['OBIS-Canada','Canadian Wildlife Service - Atlantic Region'], ['OBIS-Canada','Canadian Wildlife Service - Quebec Region'], ['OBIS-Canada','Maurice Lamontagne Institute (DFO – MLI, IML), Fisheries and Oceans Canada'], ['OBIS-Canada','Institute of Ocean Science (DFO – IOS), Fisheries and Oceans Canada'], ['OBIS-Canada','Gulf Region, Fisheries and Oceans Canada'], ['OBIS-Canada','Canadian Museum of Nature, Research & Collections'], ['OBIS-Canada',''], ['OBIS-Canada',''], ['OBIS-Canada','Huntsman Marine Science Centre'], ['OBIS-Canada','Freshwater Institute (DFO – FWI), Fisheries and Oceans Canada'], ['OBIS-Canada','Southern Gulf of St. Lawrence Coalition on Sustainability'], ['OBIS-Canada','Department of Fisheries and Oceans - St. Andrews Biological Station'], ['OBIS-Canada','University of Manitoba – Department of Biological Sciences'], ['OBIS-Canada','St. Francis Xavier University – Department of Biology'], ['OBIS-Canada','Dalhousie University'], ['OBIS-Canada','Université du Québec à Chicoutimi'], ['OBIS-Canada','Canadian Healthy Oceans Network'], ['OBIS-Canada','Northwest Atlantic Fisheries Organization'], ['OBIS-Canada','Envirosphere Consultants Ltd'], ['OBIS-Canada','Fisheries and Oceans Canada – Prince Edward Island'], ['OBIS-Canada','COINAtlantic Dalhousie University'], ['OBIS-Canada','National Research Council Canada, Halifax'], ['OBIS-Canada','Bedford Institute of Oceanography — Marine Ecology Laboratory'], ['OBIS-Canada','Fisheries and Oceans Canada – Arctic Biological Station'], ['OBIS-Canada','Huntsman Marine Science Centre - Atlantic Reference Centre'], ['OBIS-Canada','Fisheries Research Board of Canada'], ['OBIS-Canada','McGill University'], ['OBIS-Canada','Washington State Department of Ecology'], ['OBIS-Canada','Acadia University'], ['OBIS-Canada','Cape Breton University'], ['OBIS-Canada','Acadia Centre for Estuarine Research'], ['OBIS-Canada','Suffolk University – Biology Department'], ['OBIS-Canada','Nova Scotia Museum'], ['OBIS-Canada','Université du Québec à Rimouski, Institut des sciences de la mer de Rimouski'], ['OBIS-Canada','Dalhousie University – Department of Biology'], ['OBIS-Canada','Royal Ontario Museum'], ['OBIS-Canada','Acadia University - Department of Biology'], ['OBIS-Canada','Ecology Action Centre'], ['OBIS-Canada','ACAP Humber Arm'], ['OBIS-Canada','eOceans Research and Consulting'], ['OBIS-Canada','Dalhousie University, Department of Oceanography'], ['OBIS-Canada','Nova Scotian Institute of Science'], ['OBIS-Canada','Queen\'s University – Department of Biology'], ['OBIS-Canada','University of Prince Edward Island - Department of Biology'], ['OBIS-Canada','World Maritime University'], ['OBIS-Canada','Encana Corporation'], ['OBIS-Canada','Dalhousie University – School for Resource and Environmental Studies'], ['OBIS-Canada','Ellerslie Biological Station'], ['OBIS-Canada','Mount Allison University – Department of Biology'], ['OBIS-Canada','Mount Allison University'], ['OBIS-Canada','Cape Breton University – Bras D’Or Institute for Ecosystem Research'], ['OBIS-Canada','Maryland Department of Natural Resources'], ['OBIS-Canada','University of Maryland Eastern Shore - Department of Natural Sciences'], ['OBIS-Canada','Bras d’Or Lake Biosphere Reserve Association'], ['OBIS-Canada','Western University – Department of Biology'],
+
+['HAB OBIS IPT','HAB OBIS'], ['OBIS','HAB OBIS IPT'], ['HAB OBIS','UNESCO-IOC'], ['HAB OBIS','Rutgers University, Institute of Marine and Coastal Sciences'], ['HAB OBIS','Aristotle University of Thessaloniki'], ['HAB OBIS','Alexandria University-Faculty of Science- Oceanography Department'], ['HAB OBIS','University of Tasmania'], ['HAB OBIS','Université de Bretagne Occidentale'], ['HAB OBIS','UNESCO / IOC Project Office for IODE'],
+['HAB OBIS','International Society for the Study of Harmful Algae'],
+
+['IndOBIS IPT','IndOBIS'], ['OBIS','IndOBIS IPT'], ['IndOBIS','Centre for Marine Living Resources & Ecology, Ministry of Earth Sciences, Kochi'],  ['IndOBIS','UNESCO-IOC'],
+
+['ArcOD IPT','ArcOD'], ['OBIS','ArcOD IPT'],
+
+['ABDS IPT','Arctic Biodiversity Data Service (ABDS)'], ['OBIS','ABDS IPT'], ['Arctic Biodiversity Data Service (ABDS)','Conservation of Arctic Flora and Fauna (CAFF)'], ['Arctic Biodiversity Data Service (ABDS)','Arctic Council'], ['Arctic Biodiversity Data Service (ABDS)','Circumpolar Biodiversity Monitoring Programme (CBMP)'], ['Arctic Biodiversity Data Service (ABDS)','University of Alaska Fairbanks - School of Fisheries and Oceans'], ['Arctic Biodiversity Data Service (ABDS)','Canadian Museum of Nature, Research & Collections'], ['Arctic Biodiversity Data Service (ABDS)','Institute of Zoology, Zoological Society of London'], ['Arctic Biodiversity Data Service (ABDS)','Eamer Science & Policy'], ['Arctic Biodiversity Data Service (ABDS)','Environment and Climate Change Canada'], ['Arctic Biodiversity Data Service (ABDS)','Polar Knowledge Canada'], ['Arctic Biodiversity Data Service (ABDS)','Zoological Institute of the Russian Academy of Sciences'], ['Arctic Biodiversity Data Service (ABDS)','California Academy of Sciences - Department of Ichthyology'], ['Arctic Biodiversity Data Service (ABDS)','Université Laval – Departement de biologie'], ['Arctic Biodiversity Data Service (ABDS)','Institut für Polarökologie der Christian-Albrechts-Universität'], ['Arctic Biodiversity Data Service (ABDS)','Fisheries and Oceans Canada'], ['Arctic Biodiversity Data Service (ABDS)','McGill University'], ['Arctic Biodiversity Data Service (ABDS)','University of Alaska Fairbanks – Laboratory for Ecological Wildlife Habitat Data Analysis for the Land- and Seascape'],
+
+['Duke University IPT','OBIS-SEAMAP'], ['OBIS','Duke University IPT'], ['OBIS-SEAMAP','Duke University'], ['OBIS-SEAMAP','Canadian Wildlife Service - Quebec Region'], ['OBIS-SEAMAP','The Marine Mammal Laboratory'], ['OBIS-SEAMAP','Dalhousie University'], ['OBIS-SEAMAP','University of Southern Maine'],
+['OBIS-SEAMAP','Allied Whale'], ['OBIS-SEAMAP','The Costa Lab'], ['OBIS-SEAMAP','Bureau of Safety and Environmental Enforcement'], ['OBIS-SEAMAP','Conservación, Información y Estudio sobre Cetáceos'], ['OBIS-SEAMAP','Bahamas Marine Mammal Research Organisation'], ['OBIS-SEAMAP','Cascadia Research'], ['OBIS-SEAMAP','Coastal Research and Education Society of Long Island'], ['OBIS-SEAMAP','Azura Consulting LLC'], ['OBIS-SEAMAP','ASRC Energy Services'], ['OBIS-SEAMAP','Blue Whale Study'], ['OBIS-SEAMAP','University College Cork, Coastal and Marine Research Centre'], ['OBIS-SEAMAP','Institute of Cetacean Research'], ['OBIS-SEAMAP','University of Alaska Fairbanks - Deparment of Biology & Wildlife'], ['OBIS-SEAMAP','Università degli Studi di Pavia Centro Interdisciplinaire di Bioacustica E Ricerche Ambientali'], ['OBIS-SEAMAP','CSIRO-Bardi Jawi Turtle Tracking'], ['OBIS-SEAMAP','Acquario di Genova'], ['OBIS-SEAMAP','Bangladesh Sea Turtle Satellite Tracking Project'], ['OBIS-SEAMAP','The University of Tokyo, Atmosphere and Ocean Research Institute'], ['OBIS-SEAMAP','Université de La Rochelle, Centre d\'Etudes Biologiques de Chizé'], ['OBIS-SEAMAP','Coonamessett Farm Foundation'], ['OBIS-SEAMAP','L’Associazione culturale scientifica KETOS'], ['OBIS-SEAMAP','Deniz Kaplumbagalari Arastirma Merkezi'], ['OBIS-SEAMAP','Instituto del Mar del Perú'], ['OBIS-SEAMAP','Australian Antarctic Division'], ['OBIS-SEAMAP','Columbia University'], ['OBIS-SEAMAP','Oregon State University'], ['OBIS-SEAMAP','Association CHENE'], ['OBIS-SEAMAP','Associação para Investigação Costeira e Marinha'], ['OBIS-SEAMAP','Centro Terra Viva -Estudos e Advocacia Ambiental'], ['OBIS-SEAMAP','Bare Sand Island Flatback, Green and Hawksbill Project'], ['OBIS-SEAMAP','Cayman Turtle Farm'], ['OBIS-SEAMAP','A.N. Severtsov Institute of Ecology and Evolution'], ['OBIS-SEAMAP','ASSOCIACIÓ CETÀCEA'], ['OBIS-SEAMAP','Aquarium of the Pacific'], ['OBIS-SEAMAP','Institut national de recherche en sciences et technologies pour l\'environnement et l\'agriculture'],
+
+['OBIS Senegal IPT','OBIS Senegal'], ['OBIS','OBIS Senegal IPT'], ['OBIS Senegal','Centre de Recherche Océanographique de Dakar Thiaroye (CRODT-ISRA)/ LPAOSF-ESP-UCAD'], ['OBIS Senegal','Institut Mauritanien de Recherche Océanographique et des Pêches'], ['OBIS Senegal','L\'Institut Supérieur des Sciences et de Médecine Vétérinaire de Dalaba'],
+
+['OBISAU IPT','OBISAU'], ['OBIS','OBISAU IPT'], ['OBIS','AADC IPT'],['OBISAU','CSIRO Oceans and Atmosphere'], ['OBISAU','Online Zoological Collections of Australian Museums (OZCAM)'], ['OBISAU','Australian Institute of Marine Sciences (AIMS)'], ['OBISAU','Australasian Seabird Group, BirdLife Australia'], ['OBISAU','NESP Marine Biodiversity Hub'], ['OBISAU','AODN'], ['OBISAU','Australian Coastal Ecosystems Facility (ACEF)'], ['OBISAU','NSW Fisheries'], ['OBISAU','Bureau of Agricultural and Resource Economics and Sciences (ABARES)'], ['OBISAU','GlobalArchives'], ['OBISAU','BioPlatforms'], ['OBISAU','Australasian Seabird Group, BirdLife Australia'],
+
+['Caribbean OBIS IPT','Caribbean OBIS'], ['OBIS','Caribbean OBIS IPT'], ['Caribbean OBIS','Universidad Simon Bolivar'], ['Caribbean OBIS','UNESCO-IOC'], ['Caribbean OBIS','Universidade Federal do Ceará'], ['Caribbean OBIS','Universidade Federal do Paraná'], ['Caribbean OBIS','Universidad del Valle'], ['Caribbean OBIS','Museo Argentino de Ciencias Naturales "Bernardino Rivadavia'], ['Caribbean OBIS','Universidade Federal da Bahia'], ['Caribbean OBIS','Pontificia Universidad Católica de Chile, Santiago'], ['Caribbean OBIS','Universidad Nacional Mayor de San Marcos'], ['Caribbean OBIS','Centro Nacional Patagónico'], ['Caribbean OBIS','The University of the West Indies, St. Augustine Campus'], ['Caribbean OBIS','University of Hawaii'], ['Caribbean OBIS','University of Concepcion, Chile'], ['Caribbean OBIS','Universidade Federal de Sao Paulo'], ['Caribbean OBIS','University of Puerto Rico at Mayagüez'], ['Caribbean OBIS','Universidad Nacional de Mar del Plata'], ['Caribbean OBIS','Universidade Federal do Maranhão'], ['Caribbean OBIS',''], ['Caribbean OBIS','Universidad de Oriente'], ['Caribbean OBIS','Universidad de la República'], ['Caribbean OBIS','University of South Florida, St. Petersburg'], ['Caribbean OBIS','Unidad Multidisciplinaria de Docencia e Investigación, UMDI-Sisal'], ['Caribbean OBIS','Universidad Nacional Autónoma de México'], ['Caribbean OBIS','Instituto Venezolano de Investigaciones Científicas – Centro de Ecología'], ['Caribbean OBIS','Universidade Federal do Espírito Santo'], ['Caribbean OBIS','El Colegio de la Frontera Sur, Unidad Campeche'], ['Caribbean OBIS','Universidad Nacional Autonoma de Mexico, Facultad de Ciencias'], ['Caribbean OBIS','Programa EcoMar, Inc.'], ['Caribbean OBIS','Centro de Investigaciones de Ecosistemas Costeros'], ['Caribbean OBIS','Fundación Charles Darwin'], ['Caribbean OBIS','Universidad Nacional Autónoma de México, Mazatlán'], ['Caribbean OBIS','University of South Florida, College of Marine Science'], ['Caribbean OBIS','National Museum of Natural History, Smithsonian Institution'], ['Caribbean OBIS','Instituto de Investigaciones Marinas y Costeras'], 
+
+['NIWA IPT','SWP OBIS'], ['OBIS','NIWA IPT'], ['SWP OBIS','National Institute for Water & Atmospheric Research'], ['SWP OBIS','Museum National d\'Histoire Naturelle / IRD'], ['SWP OBIS','Pacific Community'], ['SWP OBIS','Bishop Museum'], ['SWP OBIS','University of Tasmania, Institute for Marine and Antarctic Studies'], ['SWP OBIS','iNaturalist NZ'], ['SWP OBIS','Geomarine Research'], ['SWP OBIS','Bureau of Marine Resources'], ['SWP OBIS','Auckland War Memorial Museum'], ['SWP OBIS','Dragonfly Data Science'], ['SWP OBIS','National Museum of Natural History, Smithsonian Institution'], ['SWP OBIS','Department of Conservation – Whangarei Office'], ['SWP OBIS','Brown University, Department of Ecology and Evolutionary Biology'], ['SWP OBIS','University of Washington, School of Aquatic & Fishery Sciences'], ['SWP OBIS','Duke University, Department of Biology'], ['SWP OBIS','University of New Mexico - Department of Biology'], ['SWP OBIS','University of North Carolina Wilmington – Department of Biology and Marine Biology'], ['SWP OBIS','Blackbeard Biologic – Science and Environmental Advisors'], ['SWP OBIS','Royal British Columbia Museum – Natural History Section'], ['SWP OBIS','Santa Barbara Museum of Natural History — Department of Invertebrate Zoology'], ['SWP OBIS','Louisiana State University – Department of Oceanography and Coastal Sciences'], ['SWP OBIS','Marine Megafauna Foundation'], ['SWP OBIS','Georgia Aquarium'], ['SWP OBIS','The A. O. Kovalevsky Institute of Marine Biological Research of Russian Academia of Science – Department of Plankton'], ['SWP OBIS','Station Marine d\'Endoume'], ['SWP OBIS','Centre d\'Estudis Avançats de Blanes'], ['SWP OBIS','University of California, Santa Barbara'], ['SWP OBIS','University of California, Santa Barbara'], ['SWP OBIS','National Geographic Society — Pristine Seas'], ['SWP OBIS','US National Park Service — Kalaupapa National Historical Park'], ['SWP OBIS','Smithsonian Institution'], ['SWP OBIS','The University of the South Pacific'], ['SWP OBIS','Ornithological Society of New Zealand'], ['SWP OBIS','Auckland Council'], ['SWP OBIS','Koninklijk Belgisch Instituut voor Natuurwetenschappen'], ['SWP OBIS','Museum of New Zealand Te Papa Tongarewa'], ['SWP OBIS','Department of Conservation- Wellington Office'], ['SWP OBIS','University of Auckland'], ['SWP OBIS','Pennsylvania State University'], ['SWP OBIS','P. P. Shirshov Institute of Oceanology – Laboratory of plankton communities structure and dynamics'], ['SWP OBIS','Academy of Natural Sciences, Philadelphia'], ['SWP OBIS','Bishop Museum — Department of Natural Sciences'], ['SWP OBIS','Centre National de la Recherche Scientifique, Observatoire Océanologique de Banyuls sur Mer'], ['SWP OBIS','Institut de Recherche pour le Développement, Noumea, BP A5, Nouvelle-Calédonie'], ['SWP OBIS','Institut de Recherche pour le Développement'], ['SWP OBIS','Université de Nouvelle-Caledonie'], ['SWP OBIS','Arizona State University'], ['SWP OBIS','Stanford University, Hopkins Marine Station'], ['SWP OBIS','Canterbury Museum'], ['SWP OBIS','Texas A&M University — Department of Wildlife and Fisheries'], ['SWP OBIS','Boston University Marine Program'], ['SWP OBIS','Conservation International - Global Marine Division'], ['SWP OBIS','Western Australian Museum'],
+
+['OBIS Kenya  IPT','OBIS Kenya'], ['OBIS','OBIS Kenya  IPT'], ['OBIS Kenya','Kenya Marine and Fisheries Research Institute'], ['OBIS Kenya','Vlaams Instituut voor de Zee'], ['OBIS Kenya','Universiteit Gent, Marine Biology research group'], ['OBIS Kenya','Universiteit Gent, Faculteit Wetenschap, Vakgroep Biologie, Afdeling Nematologie'], ['OBIS Kenya','UNESCO-IOC'], ['OBIS Kenya','Koninklijk Belgisch Instituut voor Natuurwetenschappen – Marien voorspellingscentrum'], ['OBIS Kenya','International Polar Foundation'], ['OBIS Kenya','National Academy of Sciences of Ukraine, A. O. Kovalevsky Institute of Biology of the Southern Seas'], ['OBIS Kenya','Naturalis Biodiversity Center'], ['OBIS Kenya','County Administration of Jämtland; Environment & Fisheries Department; Environmental Objectives Unit'], 
+
+['OBIS Deep Sea IPT','OBIS Deep Sea'], ['OBIS','OBIS Deep Sea IPT'], ['OBIS Deep Sea', 'CSIRO'], ['OBIS Deep Sea', 'ABYSSLINE'], ['OBIS Deep Sea', 'SponGES'], ['OBIS Deep Sea', 'ATLAS'], ['OBIS Deep Sea', 'IceAGE'], ['OBIS Deep Sea', 'SISMER'], ['OBIS Deep Sea', 'USGS DISCOVRE'], ['OBIS Deep Sea', 'NOAA’s Deep Sea Coral Research and Technology Program'], ['OBIS Deep Sea', 'NEPTUNE observatory'], ['OBIS Deep Sea', 'MBARI’s video annotation and reference (VAR) system'], ['OBIS Deep Sea', 'SeaMountsOnline'], ['OBIS Deep Sea', 'INVEMAR'], ['OBIS Deep Sea', 'EcoAfrik database'], ['OBIS Deep Sea', 'Charles Darwin Foundation'], ['OBIS Deep Sea', 'Ocean Exploration Trust'], ['OBIS Deep Sea', 'SEEP-C'],
+
+
+
+
+
+
+
+
+['SEA OBIS IPT','SEA OBIS'], ['OBIS','SEA OBIS IPT'], ['SEA OBIS','ASEAN Centre for Biodiversity'], ['SEA OBIS','Institute of Oceanology Chinese Academy of Sciences, Qingdao'], ['SEA OBIS','UNESCO-IOC'], ['SEA OBIS','Mindanao State University – Tawi-Tawi College of Technology and Oceanography'],
+
+['WSAOBIS IPT','WSAOBIS'], ['OBIS','WSAOBIS IPT'],
+
+['Malaysia OBIS IPT','OBIS Malaysia'], ['OBIS','Malaysia OBIS IPT'], ['OBIS Malaysia','UNESCO-IOC'], ['OBIS Malaysia','National Oceanography Centre, Southampton'], ['OBIS Malaysia','Korea Ocean Research & Development Institute'], ['OBIS Malaysia','Institute of Oceanography and Environment'], ['OBIS Malaysia','Rutgers University, Institute of Marine and Coastal Sciences'], 
+
+['ESP-OBIS IPT','ESP-OBIS'], ['OBIS','ESP-OBIS IPT'], ['ESP-OBIS','Centro Interdisciplinario de Ciencias Marinas, Instituto Politécnico Nacional'],
+
+['MBON IPT','MBON'], ['OBIS','MBON IPT'],
+
+['China OBIS IPT','OBIS China'], ['OBIS','China OBIS IPT'], ['OBIS China','Marine Biological Museum, Chinese Academy of Sciences'], ['OBIS China','Chinese Academy of Sciences — Institute of Oceanology — Jiaozhou Bay Marine Ecosystem Research Station'], ['OBIS China','Institute of Oceanology Chinese Academy of Sciences, Qingdao'], 
+
+['ABDS IPT','Arctic GBIF'],
+
+['BGNN Tulane IPT','Fish OBIS'], ['OBIS','BGNN Tulane IPT'], ['Fish OBIS','FishBase'], ['Fish OBIS','FishNet2'],
+
+['ArOBIS IPT','ArOBIS'], ['OBIS','ArOBIS IPT'], ['ArOBIS','Secretaría de Pesca de la Provincia del Chubut'], ['ArOBIS','Universidad de Buenos Aires — Instituto de Ecologia, Genetica y Evolucion de Buenos Aires'], ['ArOBIS','Ecocentro Puerto Madryn'], ['ArOBIS','Wildlife Conservation Society'], ['ArOBIS','Universidad Nacional de la Patagonia Austral - Unidad Académica Caleta Olivia'], ['ArOBIS','Fundación Patagonia Natural'], ['ArOBIS','Centro Austral de Investigaciones Científicas'], 
+
+['OBIS Colombia IPT','OBIS Colombia'], ['OBIS','OBIS Colombia IPT'], ['OBIS Colombia','Instituto de Investigaciones Marinas y Costeras'], ['OBIS Colombia','Universidad del Magdalena'], ['OBIS Colombia','Comisión Colombiana del Océano'], ['OBIS Colombia','Universidad del Valle'], ['OBIS Colombia','Corporacion Autonoma Regional del Magdalena'], ['OBIS Colombia','CORALINA'], ['OBIS Colombia','Asociación para el Estudio y la Conservación de las Aves en Colombia-Calidris'], ['OBIS Colombia','Agencia Nacional de Hidrocarburos'], ['OBIS Colombia','Corporación Autónoma Regional de La Guajira'], ['OBIS Colombia','BIOLOGÍA MOLECULAR MARINA'], 
+
+['CPPS OBIS IPT','CPPS OBIS'], ['OBIS','CPPS OBIS IPT'], ['CPPS OBIS','UNESCO-IOC'], ['CPPS OBIS','Comisión Permanente para el Pacífico Sur'],
+
+['OBIS Indonesia IPT','OBIS Indonesia'], ['OBIS','OBIS Indonesia IPT'],['OBIS Indonesia','Pusat Penelitian Oseanografi. Lemabga Ilmu Pengetahuan Indonesia'],
+
+['PEGO OBIS IPT','PEGO OBIS'], ['OBIS','PEGO OBIS IPT'], ['PEGO OBIS','Iranian National Institute for Oceanography and Atmospheric Science (INIOAS)'], 
+
+['IBSS IPT','IBSS'], ['OBIS','IBSS IPT'],
+['ILVO IPT','ILVO'], ['OBIS','ILVO IPT'],
+['IEO IPT','Instituto Español de Oceanografía'], ['EcoAfrik database', 'Instituto Español de Oceanografía'], ['OBIS','IEO IPT'],
+['IMAR IPT','IMAR'], ['OBIS','IMAR IPT'],
+
+['OBIS-ENV IPT','OBIS-ENV'], ['OBIS','OBIS-ENV IPT'],
+
+['NMDIS IPT','NMDIS'], ['OBIS','NMDIS IPT'],
+
+    ]
+  }]
+});
+</script>
+
+
+  </body>
+</html>
