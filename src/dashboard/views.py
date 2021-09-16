@@ -11,14 +11,27 @@ import colour
 import randomcolor
 import numpy as np
 from django.http import JsonResponse
-from api.models import Catalogue, CatalogueTypes, CatalogueThemes, Themes, Types
+from api.models import Catalogue, CatalogueTypes, CatalogueThemes, Themes, Types, Standards, M2Mtechnologies, Keywords
 from django.db.models import Count
 
 def dashboard_index(request):
+    # Total numbers
     template = loader.get_template('custom/index.html')
     total_records = str(Catalogue.objects.all().count())
     total_themes = str(Themes.objects.all().count())
     total_types = str(Types.objects.all().count())
+    total_standards = str(Standards.objects.all().count())
+    total_m2m = str(M2Mtechnologies.objects.all().count())
+    total_keywords = str(Keywords.objects.all().count())
+
+    # records creation
+    records_timeline = Catalogue.objects.values('entry_date').annotate(total=Count('entry_date')).order_by('entry_date')
+    for i in range(0,len(records_timeline)):
+        if i == 0:
+            records_timeline[i]['total_cumsum'] = records_timeline[i]['total']
+        elif i > 0:
+            records_timeline[i]['total_cumsum'] = records_timeline[i-1]['total_cumsum'] + records_timeline[i]['total']
+    print(records_timeline)
 
     # Policies
     policies_unknown = str(Catalogue.objects.filter(md_policy=0).all().count())
@@ -43,7 +56,7 @@ def dashboard_index(request):
 
     # Catalogue Themes
     themes = Themes.objects.all().values('name')
-    catalogue_themes = CatalogueThemes.objects.all().values('themes').annotate(type_count=Count('themes'))
+    catalogue_themes = CatalogueThemes.objects.all().values('themes').annotate(theme_count=Count('themes'))
     colors = randomcolor.RandomColor().generate(hue="blue", count=18)
     for i in range(0, len(catalogue_themes)):
         catalogue_themes[i]['name'] = themes[i]['name']
@@ -53,10 +66,11 @@ def dashboard_index(request):
     for k in set().union(*catalogue_themes)
     }
 
-    print(catalogue_themes)
-
     context = {'total_records': total_records, 'total_themes': total_themes, 'total_types': total_types,
-                'policies_open': policies_open,
+                'total_standards': total_standards, 'total_m2m': total_m2m, 'total_keywords': total_keywords,
+                'records_timeline': records_timeline,
+                'policies_open': policies_open, 'policies_open_registration':policies_open_registration,
+                'policies_restricted':policies_restricted, 'policies_metadata': policies_metadata, 'policies_unknown': policies_unknown,
                 'country_name_0': str(sorted_countries[0][0]), 'country_value_0': str(sorted_countries[0][1]),
                 'country_name_1': str(sorted_countries[1][0]), 'country_value_1': str(sorted_countries[1][1]),
                 'country_name_2': str(sorted_countries[2][0]), 'country_value_2': str(sorted_countries[2][1]),
