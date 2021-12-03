@@ -22,10 +22,14 @@ from django.conf.urls.static import static
 from api import views as api_views
 from dashboard import views as dash_views
 
+from django.conf.urls import url
+#from restcrudswagger import views
+from rest_framework_swagger.views import get_swagger_view
 
 router = routers.DefaultRouter()
 router.register(r'catalogue', api_views.CatalogueViewSet)
 router.register(r'catalogue_relations', api_views.CatalogueRelationsViewSet)
+router.register(r'catalogue_relations_goos_eovs', api_views.CatalogueRelationsGoosEovsViewSet)
 router.register(r'catalogue_contributed_to', api_views.CatalogueContributedtoViewSet)
 router.register(r'catalogue_dois', api_views.CatalogueDoisViewSet)
 router.register(r'catalogue_m2m_technologies', api_views.CatalogueM2MtechnologiesViewSet)
@@ -43,12 +47,17 @@ router.register(r'standards', api_views.StandardsViewSet)
 router.register(r'themes', api_views.ThemesViewSet)
 router.register(r'types', api_views.TypesViewSet)
 
+schema_view = get_swagger_view(title='ODISCat-API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    #path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('dashboard/', dash_views.dashboard_index, name='index'),
-
     path('sendjson/', dash_views.send_json, name='send_json'),
+    url(r'^$', schema_view),
+    #path('swagger/', schema_view),
+    #path('swagger/', include(router.urls))
+    url(r'^', include(router.urls))
+
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

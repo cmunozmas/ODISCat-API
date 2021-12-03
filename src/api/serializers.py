@@ -1,7 +1,11 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Catalogue, CatalogueRelations, CatalogueContributedto, CatalogueDois, CatalogueM2Mtechnologies, CatalogueObtainedfrom, CatalogueSeaRegions, CatalogueThemes, CatalogueTypes, DataSystems, Dois, Keywords, M2Mtechnologies, Policies, SeaRegions, Standards, Themes, Types
+from .models import Catalogue, CatalogueRelations, CatalogueContributedto, CatalogueDois, CatalogueM2Mtechnologies, CatalogueObtainedfrom, CatalogueRelations, CatalogueRelationsGoosEovs, CatalogueSeaRegions, CatalogueThemes, CatalogueTypes, DataSystems, Dois, GoosEovs, Institution, Keywords, M2Mtechnologies, Policies, SeaRegions, Standards, Themes, Types
 
+class InstitutionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Institution
+        fields = ('id', 'name', 'name_eng')
 
 class CatalogueSerializer(serializers.HyperlinkedModelSerializer):
     abstract = serializers.CharField(source='ds_abstract')
@@ -16,20 +20,14 @@ class CatalogueSerializer(serializers.HyperlinkedModelSerializer):
     policy = serializers.CharField(source='md_policy.name')
     contributing_countries = serializers.CharField(source='ds_countries')
     site_owner_countries = serializers.CharField(source='ds_site_countries')
-    owner_institution = serializers.CharField(source='institution')
+    #owner_institution = serializers.CharField(source='institution')
+    institution = InstitutionSerializer()
     languages = serializers.CharField(source='ds_languages')
     odisarch_type = serializers.CharField(source='odis_arch_type')
     odisarch_url = serializers.CharField(source='odis_arch_url')
     class Meta:
         model = Catalogue
-        fields = ('id', 'name', 'name_original', 'acronym', 'abstract', 'url', 'parent_url', 'policy', 'contributing_countries', 'site_owner_countries', 'citation', 'last_update', 'creation_date', 'owner_institution', 'languages', 'odisarch_type', 'odisarch_url')
-
-class CatalogueRelationsSerializer(serializers.HyperlinkedModelSerializer):
-    catalogue = CatalogueSerializer(required=True)
-    contributor = serializers.CharField(source='contributor_id')
-    class Meta:
-        model = CatalogueContributedto
-        fields = ('catalogue', 'contributor')
+        fields = ('id', 'name', 'name_original', 'acronym', 'abstract', 'url', 'parent_url', 'policy', 'contributing_countries', 'site_owner_countries', 'citation', 'last_update', 'creation_date', 'institution', 'languages', 'odisarch_type', 'odisarch_url')
 
 class CatalogueContributedtoSerializer(serializers.HyperlinkedModelSerializer):
     catalogue = CatalogueSerializer(required=True)
@@ -53,9 +51,30 @@ class CatalogueM2MtechnologiesSerializer(serializers.HyperlinkedModelSerializer)
 class CatalogueObtainedfromSerializer(serializers.HyperlinkedModelSerializer):
     catalogue = CatalogueSerializer(required=True)
     datasystems = serializers.CharField(source='datasystems.name')
+    datasystems_id = serializers.IntegerField(source='datasystems.id')
     class Meta:
         model = CatalogueObtainedfrom
-        fields = ('catalogue', 'datasystems')
+        fields = ('catalogue', 'datasystems', 'datasystems_id')
+
+class CatalogueRelationsSerializer(serializers.ModelSerializer):
+    obtainer = CatalogueSerializer()
+    contributor = CatalogueSerializer()
+    class Meta:
+        model = CatalogueRelations
+        fields = ('id','obtainer', 'contributor')
+
+class GoosEovsSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GoosEovs
+        fields = ('id', 'name')
+
+class CatalogueRelationsGoosEovsSerializer(serializers.ModelSerializer):
+    #catalogue_relations = CatalogueSerializer()
+    goos_eovs = GoosEovsSerializer()
+
+    class Meta:
+        model = CatalogueRelationsGoosEovs
+        fields = ('catalogue_relations', 'goos_eovs')
 
 class CatalogueSeaRegionsSerializer(serializers.HyperlinkedModelSerializer):
     catalogue = CatalogueSerializer(required=True)
@@ -81,7 +100,7 @@ class CatalogueTypesSerializer(serializers.HyperlinkedModelSerializer):
 class DataSystemsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DataSystems
-        fields = ('id','name', 'description')
+        fields = ('id', 'name', 'description')
 
 class DoisSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

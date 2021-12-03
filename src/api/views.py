@@ -3,8 +3,8 @@
 import django_filters.rest_framework
 from django.shortcuts import render
 from rest_framework import viewsets
-from .serializers import CatalogueSerializer, CatalogueRelationsSerializer, CatalogueContributedtoSerializer, CatalogueDoisSerializer, CatalogueM2MtechnologiesSerializer, CatalogueObtainedfromSerializer, CatalogueSeaRegionsSerializer, CatalogueThemesSerializer, CatalogueTypesSerializer, DataSystemsSerializer, DoisSerializer, KeywordsSerializer, M2MtechnologiesSerializer, PoliciesSerializer, SeaRegionsSerializer, StandardsSerializer, ThemesSerializer, TypesSerializer
-from .models import Catalogue, CatalogueRelations, CatalogueContributedto, CatalogueDois, CatalogueM2Mtechnologies, CatalogueObtainedfrom, CatalogueSeaRegions, CatalogueThemes, CatalogueTypes, DataSystems, Dois, Keywords, M2Mtechnologies, Policies, SeaRegions, Standards, Themes, Types
+from .serializers import CatalogueSerializer, CatalogueRelationsSerializer, CatalogueRelationsGoosEovsSerializer, CatalogueContributedtoSerializer, CatalogueDoisSerializer, CatalogueM2MtechnologiesSerializer, CatalogueObtainedfromSerializer, CatalogueSeaRegionsSerializer, CatalogueThemesSerializer, CatalogueTypesSerializer, DataSystemsSerializer, DoisSerializer, KeywordsSerializer, M2MtechnologiesSerializer, PoliciesSerializer, SeaRegionsSerializer, StandardsSerializer, ThemesSerializer, TypesSerializer
+from .models import Catalogue, CatalogueRelations, CatalogueRelationsGoosEovs, CatalogueContributedto, CatalogueDois, CatalogueM2Mtechnologies, CatalogueObtainedfrom, CatalogueSeaRegions, CatalogueThemes, CatalogueTypes, DataSystems, Dois, Keywords, M2Mtechnologies, Policies, SeaRegions, Standards, Themes, Types
 
 
 
@@ -12,19 +12,24 @@ class CatalogueViewSet(viewsets.ModelViewSet):
     queryset = Catalogue.objects.all()
     serializer_class = CatalogueSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['md_policy', 'ds_countries']
+    #filterset_fields = ['md_policy', 'ds_countries']
 
 class CatalogueRelationsViewSet(viewsets.ModelViewSet):
     queryset = CatalogueRelations.objects.all()
     serializer_class = CatalogueRelationsSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue', 'contributor']
+    #filterset_fields = ['catalogue', 'contributor']
+
+class CatalogueRelationsGoosEovsViewSet(viewsets.ModelViewSet):
+    queryset = CatalogueRelationsGoosEovs.objects.all()
+    serializer_class = CatalogueRelationsGoosEovsSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
 
 class CatalogueContributedtoViewSet(viewsets.ModelViewSet):
     queryset = CatalogueContributedto.objects.all()
     serializer_class = CatalogueContributedtoSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue', 'datasystems']
+    #filterset_fields = ['catalogue', 'datasystems']
 
 class CatalogueDoisViewSet(viewsets.ModelViewSet):
     queryset = CatalogueDois.objects.all()
@@ -38,25 +43,25 @@ class CatalogueObtainedfromViewSet(viewsets.ModelViewSet):
     queryset = CatalogueObtainedfrom.objects.all()
     serializer_class = CatalogueObtainedfromSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue', 'datasystems']
+    #filterset_fields = ['catalogue', 'datasystems']
 
 class CatalogueSeaRegionsViewSet(viewsets.ModelViewSet):
     queryset = CatalogueSeaRegions.objects.all()
     serializer_class = CatalogueSeaRegionsSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue_id', 'sea_regions_id']
+    #filterset_fields = ['catalogue_id', 'sea_regions_id']
 
 class CatalogueThemesViewSet(viewsets.ModelViewSet):
     queryset = CatalogueThemes.objects.all()
     serializer_class = CatalogueThemesSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue_id', 'themes_id']
+    #filterset_fields = ['catalogue_id', 'themes_id']
 
 class CatalogueTypesViewSet(viewsets.ModelViewSet):
     queryset = CatalogueTypes.objects.all()
     serializer_class = CatalogueTypesSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['catalogue_id', 'types_id']
+    #filterset_fields = ['catalogue_id', 'types_id']
 
 class DataSystemsViewSet(viewsets.ModelViewSet):
     queryset = DataSystems.objects.all()

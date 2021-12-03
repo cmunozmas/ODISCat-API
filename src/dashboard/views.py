@@ -104,6 +104,7 @@ def get_countries(request):
     for keys in countries:
         countries[keys] = int(countries[keys])
     sorted_countries = sorted(countries.items(), key=lambda kv: kv[1], reverse=True)
+    print(sorted_countries)
     return sorted_countries
 
 # def index(request):

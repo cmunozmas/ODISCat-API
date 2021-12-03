@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.realpath(project_module.__file__))
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = '(i-#jz2m7$%a-4ldmu!fi7%a^e&!m(k7(q139w@-a8cmquwxm5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'django_filters',
+    #'restcrud.apps.RestcrudConfig',
+    'rest_framework_swagger',
+    #'restcrudswagger.apps.RestcrudswaggerConfig',
 ]
 
 MIDDLEWARE = [
@@ -135,5 +138,7 @@ STATIC_URL = '/static/'
 
 # Setting filter backends
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' ,
 }
+#REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
